@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CameraBaseApp</string>
+    <string name="no_permission">ERROR: No camera permission!</string>
 </resources>
