@@ -64,10 +64,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    Handler bgHandler;
+    HandlerThread bgThread;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startBgThread();
         textureView = (TextureView)findViewById(R.id.tv);
         textureView.setSurfaceTextureListener(surfaceTextureListener);
     }
@@ -81,6 +85,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onResume() {
+        startBgThread();
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        stopBgThread();
+
+        super.onPause();
+    }
+
+    public void startBgThread() {
+        bgThread = new HandlerThread("CameraBackground");
+        bgThread.start();
+        bgHandler = new Handler(bgThread.getLooper());
+    }
+
+    public void stopBgThread() {
+        bgThread.quitSafely();
+        try {
+            bgThread.join();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /*################
@@ -116,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.addTarget(new Surface(textureView.getSurfaceTexture()));
                 captureRequest = builder.build();
 
-                captureSession.setRepeatingRequest(captureRequest, captureCallback, null);
+                captureSession.setRepeatingRequest(captureRequest, captureCallback, bgHandler);
             }
             catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -176,6 +210,17 @@ public class MainActivity extends AppCompatActivity {
         catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void closeCamera() {
+        if(captureSession != null)
+            captureSession.close();
+
+        if(cameraDevice != null)
+            cameraDevice.close();
+
+        if(imageReader != null)
+            imageReader.close();
     }
 
     public Size getSmallestSize() {
