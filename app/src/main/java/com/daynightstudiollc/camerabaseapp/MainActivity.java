@@ -14,6 +14,8 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                builder.addTarget(imageReader.getSurface());
+                //builder.addTarget(imageReader.getSurface());
                 builder.addTarget(new Surface(textureView.getSurfaceTexture()));
                 captureRequest = builder.build();
 
