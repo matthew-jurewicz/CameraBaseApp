@@ -90,14 +90,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         startBgThread();
-
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         stopBgThread();
-
         super.onPause();
     }
 
